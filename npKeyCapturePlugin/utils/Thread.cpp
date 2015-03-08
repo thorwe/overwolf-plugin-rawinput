@@ -1,7 +1,3 @@
-/*
-  Simple IO Plugin
-  Copyright (c) 2014 Overwolf Ltd.
-*/
 #include "Thread.h"
 
 using namespace utils;

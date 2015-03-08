@@ -8,9 +8,24 @@
 #include <vector>
 #include <sstream>
 
+int32_t id = 0;	// there is quite likely a better way to do this...
+std::map<int32_t, PluginMethodKeyCapture*> instanceMap;
+
 // fileExists( filename, callback(status) )
 PluginMethodKeyCapture::PluginMethodKeyCapture(NPObject* object, NPP npp) :
 PluginMethod(object, npp) {
+}
+
+bool PluginMethodKeyCapture::DeleteInstance(int32_t id_in)	// static
+{
+	if (instanceMap.find(id_in) == instanceMap.end())
+		return false;
+
+	PluginMethodKeyCapture* instance = instanceMap[id_in];
+	instance->callback_ = nullptr;
+	// delete instance;
+	instanceMap.erase(id_in);
+	return true;
 }
 
 //virtual 
@@ -25,9 +40,10 @@ PluginMethod* PluginMethodKeyCapture::Clone(
 		new PluginMethodKeyCapture(object, npp);
 
 	try {
-		if (argCount != 2 ||
+		if (argCount != 3 ||
 			!NPVARIANT_IS_STRING(args[0]) ||
-			!NPVARIANT_IS_OBJECT(args[1])) {
+			!NPVARIANT_IS_OBJECT(args[1]) ||
+			!NPVARIANT_IS_OBJECT(args[2])) {
 			NPN_SetException(
 				__super::object_,
 				"invalid params passed to function");
@@ -38,10 +54,35 @@ PluginMethod* PluginMethodKeyCapture::Clone(
 			NPVARIANT_TO_STRING(args[0]).UTF8Characters,
 			NPVARIANT_TO_STRING(args[0]).UTF8Length);
 
-		clone->callback_ = NPVARIANT_TO_OBJECT(args[1]);
+		clone->callback_ = NPVARIANT_TO_OBJECT(args[2]);
 		
 		// add ref count to callback object so it won't delete
 		NPN_RetainObject(clone->callback_);
+
+		// id + callback
+		clone->id_ = id;
+		++id;
+		
+		instanceMap.insert(std::make_pair(clone->id_, clone));
+		NPVariant arg;
+		NPVariant ret_val;
+		NPObject* id_callback = NPVARIANT_TO_OBJECT(args[1]);
+
+		INT32_TO_NPVARIANT(
+			clone->id_,
+			arg
+			);
+
+		// fire callback
+		NPN_InvokeDefault(
+			__super::npp_,
+			id_callback,
+			&arg,
+			1,
+			&ret_val);
+
+		NPN_ReleaseVariantValue(&ret_val);
+		// / id + callback
 
 		return clone;
 	}
@@ -134,13 +175,18 @@ void PluginMethodKeyCapture::Execute() {
 		// Sleep() requires WinXP or later (sleep 15 milliseconds)
 		// Can be removed entirely to capture Yubikey, etc.
 		// but may be CPU intensive
-		if (isRun)
+		if (isRun) {
 			Sleep(15);
+			isRun = HasCallback();
+		}
 	}	
 }
 
 // virtual
 void PluginMethodKeyCapture::TriggerCallback() {
+	if (!HasCallback())
+		return;
+
 	NPVariant arg;
 	NPVariant ret_val;
 

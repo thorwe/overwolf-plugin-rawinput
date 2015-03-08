@@ -13,6 +13,10 @@
     new class(this, npp_); \
 }
 
+#define REGISTER_GENERIC_METHOD(name, method) { \
+	generic_methods_[NPN_GetStringIdentifier(name)] = &method; \
+}
+
 nsScriptableObjectKeyCapture::nsScriptableObjectKeyCapture(NPP npp) :
   nsScriptableObjectBase(npp),
   shutting_down_(false) {
@@ -29,6 +33,7 @@ nsScriptableObjectKeyCapture::~nsScriptableObjectKeyCapture(void) {
 bool nsScriptableObjectKeyCapture::Init() {
 #pragma region public methods
   REGISTER_METHOD("startKeyCapture", PluginMethodKeyCapture);
+  REGISTER_GENERIC_METHOD("deleteInstance", nsScriptableObjectKeyCapture::DeleteInstance);
 
 
 #pragma endregion public methods
@@ -47,7 +52,7 @@ bool nsScriptableObjectKeyCapture::HasMethod(NPIdentifier name) {
 #endif
 
   // does the method exist?
-  return (methods_.find(name) != methods_.end());
+  return ((generic_methods_.find(name) != generic_methods_.end()) || (methods_.find(name) != methods_.end()));
 }
 
 bool nsScriptableObjectKeyCapture::Invoke(
@@ -64,11 +69,15 @@ bool nsScriptableObjectKeyCapture::Invoke(
   MethodsMap::iterator iter = methods_.find(name);
   
   if (iter == methods_.end()) {
-    // should never reach here
-    NPN_SetException(this, "bad function called??");
-    return false;
+	  GenericMethodsMap::iterator generic_iter = generic_methods_.find(name);
+	  if (generic_iter == generic_methods_.end()) {
+		  // should never reach here
+		  NPN_SetException(this, "bad function called??");
+		  return false;
+	  }
+	  return (this->*generic_iter->second)(name, args, argCount, result);
   }
-
+  
   PluginMethod* plugin_method = 
     iter->second->Clone(this, npp_, args, argCount, result);
 
@@ -163,4 +172,37 @@ void nsScriptableObjectKeyCapture::ExecuteCallback(void* method) {
   plugin_method->TriggerCallback();
 
   // delete plugin_method;
+}
+
+bool nsScriptableObjectKeyCapture::DeleteInstance(
+	NPIdentifier name,
+	const NPVariant *args,
+	uint32_t argCount,
+	NPVariant *result) {
+	if (argCount != 2 ||
+		!NPVARIANT_IS_DOUBLE(args[0]) ||
+		!NPVARIANT_IS_OBJECT(args[1])) {
+		NPN_SetException(this, "(DeleteInstance) invalid params passed to function");
+		return true;
+	}
+	int32_t id = (int32_t)(int)floor(NPVARIANT_TO_DOUBLE(args[0]) + 0.5);	// all numbers come in as double in chrome...
+
+	bool foundAndDeleted = PluginMethodKeyCapture::DeleteInstance(id);
+
+	NPVariant out_args[2];
+	NPVariant ret_val;
+
+	BOOLEAN_TO_NPVARIANT(foundAndDeleted, out_args[0]);
+	INT32_TO_NPVARIANT(id, out_args[1]);
+
+	// fire callback
+	NPN_InvokeDefault(
+		__super::npp_,
+		NPVARIANT_TO_OBJECT(args[1]),
+		out_args,
+		2,
+		&ret_val);
+
+	NPN_ReleaseVariantValue(&ret_val);
+	return true;
 }

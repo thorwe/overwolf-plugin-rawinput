@@ -3,6 +3,7 @@
 
 #include "plugin_method.h"
 #include <string>
+#include <map>
 
 class PluginMethodKeyCapture : public PluginMethod {
 public:
@@ -18,6 +19,7 @@ public:
 	virtual bool HasCallback();
 	virtual void Execute();
 	virtual void TriggerCallback();
+	static bool DeleteInstance(int32_t id);
 
 protected:
 	NPObject* callback_;
@@ -26,8 +28,11 @@ protected:
 	// callback
 	std::string output_;
 
+	int32_t id_;
+
 private:
 	SHORT last_keyCode;
+	// static std::map<int32_t, PluginMethodKeyCapture*> instanceMap;
 };
 
 

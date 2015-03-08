@@ -38,6 +38,12 @@ private:
   void ExecuteMethod(PluginMethod* method);
   static void ExecuteCallback(void* method);
 
+  bool DeleteInstance(
+	  NPIdentifier name,
+	  const NPVariant *args,
+	  uint32_t argCount,
+	  NPVariant *result);
+
 // member variables
 private:
   // holds the public methods
@@ -47,6 +53,18 @@ private:
   // holds the public methods
   typedef std::map<NPIdentifier, std::string> PropertiesMap;
   PropertiesMap properties_;
+
+  // generic method style
+  // defines a generic method
+  typedef bool (nsScriptableObjectKeyCapture::*GenericMethodHandle)(
+	  NPIdentifier,
+	  const NPVariant*,
+	  uint32_t,
+	  NPVariant*);
+
+  // holds the public methods
+  typedef std::map<NPIdentifier, GenericMethodHandle> GenericMethodsMap;
+  GenericMethodsMap generic_methods_;
 
   // good idea for when having an autonomous thread sending callbacks
   bool shutting_down_;

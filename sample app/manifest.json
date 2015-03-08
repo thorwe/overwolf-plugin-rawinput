@@ -1,0 +1,34 @@
+{
+	"manifest_version":"1",
+	"type":"WebApp",
+	"meta":{
+		"name":"Key Capture Plugin Sample",
+		"version":"1.0.0.0",
+		"minimum-overwolf-version": "0.81.34.0",
+		"author":"Thorsten Weinz (thorwe)",
+		"icon":"icon.png",
+		"icon_gray":"icon_gray.png",
+		"description":"Sample app for using the key capture plugin"
+	},
+	"data": {
+		"start_window":"index",
+		"windows":{
+			"index":{
+				"file":"index.html",
+				"transparent":false,
+				"resizable":true,
+				"show_in_taskbar": true,
+				"size": {
+					"width": 600,
+					"height": 300
+				},
+				"start_position": {
+					"Top": 100,
+					"Left": 300
+				}
+			}
+		},
+		"plugins": ["npKeyCapturePlugin.dll"]
+	},
+	"permissions": ["GameInfo"]
+}

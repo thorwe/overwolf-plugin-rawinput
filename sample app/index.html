@@ -1,0 +1,46 @@
+<html>
+	<head>
+		<title>Key Capture App Tester</title>
+	</head>
+	<body>
+
+		<embed id="plugin" type="application/x-key-capture-plugin" width=0px height=0px>
+		</embed>
+
+	<h1 id="title"></h1>
+	<hr>
+	<div id="messages"></div>
+
+	<script>
+		navigator.plugins.refresh(true);
+
+		function addMessage(message) {
+			var obj = document.createElement("div");
+			obj.innerText = message;
+			document.querySelector('#messages').appendChild(obj);
+		}
+
+		function plugin() {
+			return document.querySelector('#plugin');
+		}
+
+		if (plugin() == null) {
+			document.querySelector('#title').innerText = "Plugin couldn't be loaded??";
+			return;
+		} else {
+			document.querySelector('#title').innerText = "Plugin was loaded!";
+		}
+
+		addMessage("\n");
+
+		window.addEventListener("keypress",
+    		function(event){
+				console.log(event);
+			});
+
+		plugin().startKeyCapture("1 2 3 4 5 6 7 8 9 0", function(result) {addMessage(result)});
+
+	</script>
+
+	</body>
+</html>

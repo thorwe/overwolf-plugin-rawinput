@@ -21,4 +21,7 @@ npKeyCapturePlugin/ipch
 *.opensdf
 *.sdf
 npKeyCapturePlugin/Release/
+npKeyCapturePlugin/Win32/
+npKeyCapturePlugin/bin/
+npKeyCapturePlugin/RawInput/Win32/
 *.suo

@@ -1,0 +1,48 @@
+@font-face {
+	font-family: "icons";
+	src: url( "../fonts/icons/icons.woff" ) format('woff');
+	font-weight: normal;
+	font-style: normal;
+}
+
+i {
+	font-family: "icons";
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+}
+
+i.poll:before         { content: "\e600"; }
+i.mini-chat:before    { content: "\e601"; }
+i.chat:before 	      { content: "\e602"; }
+i.camera:before       { content: "\e603"; }
+i.layout:before       { content: "\e604"; }
+i.minimize:before     { content: "\e605"; }
+i.close:before        { content: "\e606"; }
+i.check:before        { content: "\e607"; }
+i.speaker:before      { content: "\e608"; }
+i.setting:before      { content: "\e609"; }
+i.stream:before 	  { content: "\e610"; }
+i.stream-always:before{ content: "\e611"; }
+i.minimize-center:before{ content: "\e612"; }
+i.unlock:before       { content: "\e60a"; }
+i.lock:before         { content: "\e60b"; }
+i.resize:before       { content: "\e60c"; }
+i.twitch:before       { content: "\e60d"; }
+i.camera-error:before { content: "\e60e"; }
+i.stream-never:before { content: "\e60f"; }
+
+i.resize {
+	cursor:nwse-resize;
+	right: 1px;
+	bottom: 1px;
+}
+
+i.settings {
+	text-shadow: 0 0 1px #6441A5, 0 0 2px #6441A5, 0 0 3px #6441A5;
+}
+

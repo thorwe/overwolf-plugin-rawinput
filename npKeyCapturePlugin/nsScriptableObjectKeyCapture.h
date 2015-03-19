@@ -44,6 +44,7 @@ private:
 	  uint32_t argCount,
 	  NPVariant *result);
 
+
 // member variables
 private:
   // holds the public methods

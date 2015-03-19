@@ -32,7 +32,7 @@ protected:
 
 private:
 	SHORT last_keyCode;
-	// static std::map<int32_t, PluginMethodKeyCapture*> instanceMap;
+	bool done_;
 };
 
 

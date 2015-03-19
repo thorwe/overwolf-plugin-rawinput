@@ -34,10 +34,10 @@
 
 		addMessage("\n");
 
-		window.addEventListener("keypress",
+		/*window.addEventListener("keypress",
 								function(event){
 			console.log(event);
-		});
+		});*/
 
 		var keyCaptureId = -1,
 			button = document.getElementById("toggleCapture");
@@ -51,7 +51,7 @@
 					button.innerHTML = "Id: " + keyCaptureId;
 				} ,
 										 function(result) {
-					addMessage(result)
+					addMessage("RawInput: " + result)
 				});
 
 			} else {

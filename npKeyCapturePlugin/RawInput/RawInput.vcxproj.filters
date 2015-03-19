@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Devices">
+      <UniqueIdentifier>{649e704b-92b1-49a7-89ac-0c52ae994e30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{0ae6b4cd-8e2d-4390-9026-59dc96421727}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pch">
+      <UniqueIdentifier>{ab26a7a3-c1b7-401e-910f-aab607d48739}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="RawMouse.h">
+      <Filter>Devices</Filter>
+    </ClInclude>
+    <ClInclude Include="RawKeyboard.h">
+      <Filter>Devices</Filter>
+    </ClInclude>
+    <ClInclude Include="RawHID.h">
+      <Filter>Devices</Filter>
+    </ClInclude>
+    <ClInclude Include="RawDevice.h">
+      <Filter>Devices</Filter>
+    </ClInclude>
+    <ClInclude Include="RawInput.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="RawInputAPI.h">
+      <Filter>pch</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="RawHID.cpp">
+      <Filter>Devices</Filter>
+    </ClCompile>
+    <ClCompile Include="RawKeyboard.cpp">
+      <Filter>Devices</Filter>
+    </ClCompile>
+    <ClCompile Include="RawMouse.cpp">
+      <Filter>Devices</Filter>
+    </ClCompile>
+    <ClCompile Include="RawInputAPI.cpp">
+      <Filter>pch</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

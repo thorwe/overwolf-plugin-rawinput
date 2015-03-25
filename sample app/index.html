@@ -41,7 +41,7 @@
 
 		var keyCaptureId = -1,
 			button = document.getElementById("toggleCapture");
-		
+
 		button.addEventListener("click", function() {
 			if (keyCaptureId == -1) {
 				plugin().startKeyCapture("1 2 3 4 5 6 7 8 9 0",
@@ -63,6 +63,13 @@
 			}
 		});
 
+		plugin().startXInputMonitor(
+			function(result) {
+				console.log("startXInputMonitor", result);
+			},
+			function(callback,cb2,cb3) {
+				console.log("XInput", callback, cb2, cb3);
+			});
 
 
 	</script>

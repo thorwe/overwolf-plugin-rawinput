@@ -60,7 +60,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <WarningLevel>Level3</WarningLevel>
       <AdditionalIncludeDirectories>..\..\..\xulrunner-sdk\include;RawInput;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>NDEBUG;MOZILLA_STRICT_API;XP_WIN;WIN32;_WINDOWS;_USRDLL;npKeyCapturePlugin_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WIN32_WINNT=0x0600;NDEBUG;MOZILLA_STRICT_API;XP_WIN;WIN32;_WINDOWS;_USRDLL;npKeyCapturePlugin_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
       <ObjectFileName>$(IntDir)</ObjectFileName>
@@ -87,7 +87,7 @@
       <SubSystem>Console</SubSystem>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;Xinput9_1_0.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>.\$(TargetName).def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
@@ -102,7 +102,7 @@
       <MinimalRebuild>true</MinimalRebuild>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <AdditionalIncludeDirectories>..\..\..\xulrunner-sdk\include;..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_DEBUG;MOZILLA_STRICT_API;XP_WIN;WIN32;_WINDOWS;_USRDLL;npKeyCapturePlugin_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_WIN32_WINNT=0x0600;MOZILLA_STRICT_API;XP_WIN;WIN32;_WINDOWS;_USRDLL;npKeyCapturePlugin_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
       <ObjectFileName>$(IntDir)</ObjectFileName>
@@ -131,7 +131,7 @@
       <SubSystem>Console</SubSystem>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;Xinput9_1_0.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>.\$(TargetName).def</ModuleDefinitionFile>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
@@ -146,7 +146,11 @@
     <ClCompile Include="plugin_common\np_entry.cpp" />
     <ClCompile Include="plugin_method.cpp" />
     <ClCompile Include="plugin_method_key_capture.cpp" />
+    <ClCompile Include="plugin_method_xinput_capture.cpp" />
     <ClCompile Include="utils\CriticalSectionLock.cpp" />
+    <ClCompile Include="utils\easyx\easyx.cpp" />
+    <ClCompile Include="utils\easyx\event.cpp" />
+    <ClCompile Include="utils\easyx\utility.cpp" />
     <ClCompile Include="utils\Encoders.cpp" />
     <ClCompile Include="utils\Thread.cpp" />
   </ItemGroup>
@@ -163,10 +167,15 @@
     <ClInclude Include="plugin_common\pluginbase.h" />
     <ClInclude Include="plugin_method.h" />
     <ClInclude Include="plugin_method_key_capture.h" />
+    <ClInclude Include="plugin_method_xinput_capture.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="utils\CriticalSectionLock.h" />
+    <ClInclude Include="utils\easyx\easyx.hpp" />
+    <ClInclude Include="utils\easyx\event.hpp" />
+    <ClInclude Include="utils\easyx\utility.hpp" />
     <ClInclude Include="utils\Encoders.h" />
     <ClInclude Include="utils\Thread.h" />
+    <ClInclude Include="utils\VersionHelpers.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="RawInput\RawInput.vcxproj">

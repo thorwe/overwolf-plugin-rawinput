@@ -37,6 +37,18 @@
     <ClCompile Include="plugin_method_key_capture.cpp">
       <Filter>Source Files\plugin_methods</Filter>
     </ClCompile>
+    <ClCompile Include="utils\easyx\easyx.cpp">
+      <Filter>Source Files\utils\easyx</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\easyx\event.cpp">
+      <Filter>Source Files\utils\easyx</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\easyx\utility.cpp">
+      <Filter>Source Files\utils\easyx</Filter>
+    </ClCompile>
+    <ClCompile Include="plugin_method_xinput_capture.cpp">
+      <Filter>Source Files\plugin_methods</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\Thread.h">
@@ -67,6 +79,21 @@
     <ClInclude Include="plugin_method_key_capture.h">
       <Filter>Header Files\plugin_methods</Filter>
     </ClInclude>
+    <ClInclude Include="utils\easyx\easyx.hpp">
+      <Filter>Header Files\utils\easyx</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\easyx\event.hpp">
+      <Filter>Header Files\utils\easyx</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\easyx\utility.hpp">
+      <Filter>Header Files\utils\easyx</Filter>
+    </ClInclude>
+    <ClInclude Include="plugin_method_xinput_capture.h">
+      <Filter>Header Files\plugin_methods</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\VersionHelpers.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
@@ -95,6 +122,12 @@
     </Filter>
     <Filter Include="Source Files\plugin_methods">
       <UniqueIdentifier>{5c42a925-68ad-45a0-b4e5-83ded7aaca7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\utils\easyx">
+      <UniqueIdentifier>{7b8df5f3-b355-4c96-ba94-98a3257a0223}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\utils\easyx">
+      <UniqueIdentifier>{513c64fe-b02b-4dd4-ace6-6f850e8cebdb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

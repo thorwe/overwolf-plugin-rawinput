@@ -7,6 +7,7 @@
 
 #include "plugin_method.h"
 #include "plugin_method_key_capture.h"
+#include "plugin_method_xinput_capture.h"
 
 #define REGISTER_METHOD(name, class) { \
   methods_[NPN_GetStringIdentifier(name)] = \
@@ -33,8 +34,9 @@ nsScriptableObjectKeyCapture::~nsScriptableObjectKeyCapture(void) {
 bool nsScriptableObjectKeyCapture::Init() {
 #pragma region public methods
   REGISTER_METHOD("startKeyCapture", PluginMethodKeyCapture);
-  REGISTER_GENERIC_METHOD("deleteInstance", nsScriptableObjectKeyCapture::DeleteInstance);
+  REGISTER_GENERIC_METHOD("deleteKeyCaptureInstance", nsScriptableObjectKeyCapture::DeleteInstance);
 
+  REGISTER_METHOD("startXInputMonitor", PluginMethodXInputCapture);
 
 #pragma endregion public methods
 

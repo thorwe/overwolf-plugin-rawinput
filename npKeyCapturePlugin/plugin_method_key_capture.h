@@ -21,6 +21,8 @@ public:
 	virtual void TriggerCallback();
 	static bool DeleteInstance(int32_t id);
 
+	virtual std::string GetName() { return "RawInputMonitor"; };
+
 protected:
 	NPObject* callback_;
 	std::string input_;

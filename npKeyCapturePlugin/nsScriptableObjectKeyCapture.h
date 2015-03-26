@@ -72,7 +72,8 @@ private:
 
   // this allows us to run our code on a separate thread than the 
   // main browser thread - to be more responsive
-  std::auto_ptr<utils::Thread> thread_;
+  std::auto_ptr<utils::Thread> thread_key;
+  std::auto_ptr<utils::Thread> thread_xinput;
 };
 
 // declare our NPObject-derived scriptable object class

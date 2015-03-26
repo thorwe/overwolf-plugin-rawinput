@@ -6,6 +6,7 @@
 #define PLUGIN_METHODS_PLUGIN_METHOD_H_
 
 #include "nsScriptableObjectBase.h"
+#include <string>
 
 class PluginMethod {
 public:
@@ -22,6 +23,7 @@ public:
   virtual bool HasCallback() = 0;
   virtual void Execute() = 0;
   virtual void TriggerCallback() = 0;
+  virtual std::string GetName() = 0;
 
 protected:
   NPObject* object_;

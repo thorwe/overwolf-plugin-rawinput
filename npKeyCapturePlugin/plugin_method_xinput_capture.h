@@ -21,6 +21,8 @@ public:
 	virtual void TriggerCallback();
 	static bool DeleteInstance(int32_t id);
 
+	virtual std::string GetName() { return "XInputMonitor"; };
+	
 protected:
 	NPObject* callback_;
 
@@ -28,12 +30,17 @@ protected:
 	std::string output_type_;
 	std::string output_which_;
 	int output_gamepad_;
+	int16_t output_angle_;
 	
 	int32_t id_;
 
 private:
 	std::string last_ltrigger_type_;
 	std::string last_rtrigger_type_;
+	int16_t last_thumb_l_x;
+	int16_t last_thumb_l_y;
+	int16_t last_thumb_r_x;
+	int16_t last_thumb_r_y;
 	bool done_;
 };
 

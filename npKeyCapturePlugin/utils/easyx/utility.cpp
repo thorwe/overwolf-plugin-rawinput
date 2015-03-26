@@ -32,11 +32,11 @@ namespace data {
 
 const char * const button_names[] = {
 	"A", "B", "X", "Y",
-	"DPAD Left", "DPAD Right", "DPAD Up", "DPAD Down",
-	"Left Bumper", "Right Bumper",
-	"Left Thumb", "Right Thumb",
-	"Left Thumb X", "Left Thumb Y", "Right Thumb X", "Right Thumb Y",
-	"Start", "Back"
+	"DPAD_L", "DPAD_R", "DPAD_U", "DPAD_D",	//"DPAD Left", "DPAD Right", "DPAD Up", "DPAD Down",
+	"BUMPER_L", "BUMPER_R",	//"Left Bumper", "Right Bumper",
+	"THUMB_L", "THUMB_R",	//"Left Thumb", "Right Thumb",
+	"THUMB_L_X", "THUMB_L_Y", "THUMB_R_X", "THUMB_R_Y",	//"Left Thumb X", "Left Thumb Y", "Right Thumb X", "Right Thumb Y",
+	"START", "BACK"
 };
 
 }

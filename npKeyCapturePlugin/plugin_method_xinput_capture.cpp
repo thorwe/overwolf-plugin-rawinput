@@ -56,6 +56,10 @@ PluginMethod* PluginMethodXInputCapture::Clone(
 			return nullptr;
 		}
 
+		clone->last_thumb_l_x = 0;
+		clone->last_thumb_l_y = 0;
+		clone->last_thumb_r_x = 0;
+		clone->last_thumb_r_y = 0;
 		clone->last_ltrigger_type_ = "RELEASE";
 		clone->last_rtrigger_type_ = "RELEASE";
 
@@ -123,16 +127,19 @@ void PluginMethodXInputCapture::Execute() {
 			case EASYX_EVENT_CONNECT:
 				output_type_ = "CONNECT";
 				output_which_ = "";
+				output_angle_ = 0;
 				done_ = true;
 				break;
 			case EASYX_EVENT_DISCONNECT:
 				output_type_ = "DISCONNECT";
 				output_which_ = "";
+				output_angle_ = 0;
 				done_ = true;
 				break;
 			case EASYX_EVENT_PRESS:
 				output_type_ = "PRESS";
 				output_which_ = easyx::name(event.which);
+				output_angle_ = 0;
 				done_ = true;
 				break;
 			case EASYX_EVENT_RELEASE:
@@ -140,23 +147,25 @@ void PluginMethodXInputCapture::Execute() {
 				output_which_ = easyx::name(event.which);
 				if (output_which_.length() == 0) {
 					if (event.which == EASYX_LTRIGGER) {
-						output_which_ = "LTRIGGER";
+						output_which_ = "TRIGGER_L";
 						last_ltrigger_type_ = output_type_;
 					}
 					else if (event.which == EASYX_RTRIGGER) {
-						output_which_ = "RTRIGGER";
+						output_which_ = "TRIGGER_R";
 						last_rtrigger_type_ = output_type_;
 					}
 					else
 						output_which_ = std::to_string(event.which);
 				}
+				output_angle_ = 0;
 				done_ = true;
 				break;
 			case EASYX_EVENT_DOWN:
 				switch (event.which) {
 				case EASYX_LTRIGGER:
 					output_type_ = "PRESS";
-					output_which_ = "LTRIGGER";
+					output_which_ = "TRIGGER_L";
+					output_angle_ = event.angle;
 					if (last_ltrigger_type_ == "RELEASE") {
 						last_ltrigger_type_ = "PRESS";
 						done_ = true;
@@ -164,45 +173,58 @@ void PluginMethodXInputCapture::Execute() {
 					break;
 				case EASYX_RTRIGGER:
 					output_type_ = "PRESS";
-					output_which_ = "RTRIGGER";
+					output_which_ = "TRIGGER_R";
+					output_angle_ = event.angle;
 					if (last_rtrigger_type_ == "RELEASE") {
 						last_rtrigger_type_ = "PRESS";
 						done_ = true;
 					}
 					break;
-				}
-				if (done_)
+				case EASYX_LTHUMB_X:
+					if (event.angle != last_thumb_l_x) {
+						last_thumb_l_x = event.angle;
+						output_type_ = "DOWN";
+						output_which_ = easyx::name(event.which);
+						output_angle_ = event.angle;
+						done_ = true;
+					}
 					break;
-				/*output_which_ = easyx::name(event.which);
-				if (output_which_.length() == 0) {
-					if (event.which == EASYX_LTRIGGER)
-						output_which_ = "LTRIGGER";
-					else if (event.which == EASYX_RTRIGGER)
-						output_which_ = "RTRIGGER";
-					else
-						output_which_ = std::to_string(event.which);
-				}
-				if (event.which == EASYX_LTRIGGER) {
-					if (last_ltrigger_type_ == "RELEASE") {
-						last_ltrigger_type_ = output_type_;
+				case EASYX_LTHUMB_Y:
+					if (event.angle != last_thumb_l_y) {
+						last_thumb_l_y = event.angle;
+						output_type_ = "DOWN";
+						output_which_ = easyx::name(event.which);
+						output_angle_ = event.angle;
 						done_ = true;
 					}
-
-				}
-				else if (event.which == EASYX_RTRIGGER) {
-					if (last_rtrigger_type_ == "RELEASE") {
-						last_rtrigger_type_ = output_type_;
+					break;
+				case EASYX_RTHUMB_X:
+					if (event.angle != last_thumb_r_x) {
+						last_thumb_r_x = event.angle;
+						output_type_ = "DOWN";
+						output_which_ = easyx::name(event.which);
+						output_angle_ = event.angle;
 						done_ = true;
 					}
+					break;
+				case EASYX_RTHUMB_Y:
+					if (event.angle != last_thumb_r_y) {
+						last_thumb_r_y = event.angle;
+						output_type_ = "DOWN";
+						output_which_ = easyx::name(event.which);
+						output_angle_ = event.angle;
+						done_ = true;
+					}
+					break;
 				}
-				else
-					done_ = true;*/
-
 				break;
+
 			default:	// should not happen at all actually
 				output_type_ = "";
 				output_which_ = "";
 			}
+			if (done_)
+				break;
 		}
 	}
 }
@@ -212,29 +234,29 @@ void PluginMethodXInputCapture::TriggerCallback() {
 	if (!HasCallback())
 		return;
 
-	NPVariant args[3];
+	NPVariant args[4];
 	NPVariant ret_val;
+
+	INT32_TO_NPVARIANT(output_gamepad_, args[0]);
 
 	STRINGN_TO_NPVARIANT(
 		output_type_.c_str(),
 		output_type_.size(),
-		args[0]);
+		args[1]);
 
 	STRINGN_TO_NPVARIANT(
 		output_which_.c_str(),
 		output_which_.size(),
-		args[1]);
-
-	INT32_TO_NPVARIANT(
-		output_gamepad_,
 		args[2]);
 
+	INT32_TO_NPVARIANT(output_angle_, args[3]);
+	
 	// fire callback
 	NPN_InvokeDefault(
 		__super::npp_,
 		callback_,
 		args,
-		3,
+		4,
 		&ret_val);
 
 	NPN_ReleaseVariantValue(&ret_val);

@@ -10,8 +10,8 @@
 #include "plugin_method_xinput_capture.h"
 
 #define REGISTER_METHOD(name, class) { \
-  methods_[NPN_GetStringIdentifier(name)] = \
-    new class(this, npp_); \
+	NPIdentifier ident = NPN_GetStringIdentifier(name); \
+	methods_[ident] = new class(this, npp_); \
 }
 
 #define REGISTER_GENERIC_METHOD(name, method) { \
@@ -26,8 +26,11 @@ nsScriptableObjectKeyCapture::nsScriptableObjectKeyCapture(NPP npp) :
 nsScriptableObjectKeyCapture::~nsScriptableObjectKeyCapture(void) {
   shutting_down_ = true;
   
-  if (thread_.get()) {
-    thread_->Stop();
+  if (thread_key.get()) {
+    thread_key->Stop();
+  }
+  if (thread_xinput.get()) {
+	  thread_xinput->Stop();
   }
 }
 
@@ -43,8 +46,11 @@ bool nsScriptableObjectKeyCapture::Init() {
 #pragma region read-only properties
 #pragma endregion read-only properties
 
-  thread_.reset(new utils::Thread());
-  return thread_->Start();
+  thread_key.reset(new utils::Thread());
+  thread_xinput.reset(new utils::Thread());
+  bool start_key = thread_key->Start();
+  bool start_xinput = thread_xinput->Start();
+  return (start_key && start_xinput);
 }
 
 bool nsScriptableObjectKeyCapture::HasMethod(NPIdentifier name) {
@@ -87,8 +93,20 @@ bool nsScriptableObjectKeyCapture::Invoke(
     return false;
   }
 
-  // post to separate thread so that we are responsive
-  return thread_->PostTask(
+  utils::Thread* thread = 0;
+  if (plugin_method->GetName().compare("RawInputMonitor") == 0) {
+	  thread = thread_key.get();
+  }
+  else if (plugin_method->GetName().compare("XInputMonitor") == 0) {
+	  thread = thread_xinput.get();
+  }
+  else
+  {
+	  NPN_SetException(this, "could not find thread??");
+	  return false;
+  }
+  
+  return thread->PostTask(
     std::bind(
     &nsScriptableObjectKeyCapture::ExecuteMethod, 
     this,

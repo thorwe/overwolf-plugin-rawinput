@@ -12,7 +12,7 @@ int nsPluginInstanceKeyCapture::ref_count_ = 0;
 
 ////////////////////////////////////////
 //
-// nsPluginInstanceKeyCapture class implementation
+// nsPluginInstance class implementation
 //
 nsPluginInstanceKeyCapture::nsPluginInstanceKeyCapture(NPP instance) :
   nsPluginInstanceBase(),

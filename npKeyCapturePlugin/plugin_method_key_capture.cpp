@@ -234,6 +234,16 @@ void PluginMethodKeyCapture::Execute() {
 				chars_ws = L"ESC";
 			else if (vkey == VK_RETURN)
 				chars_ws = L"RETURN";
+			else if (vkey == VK_SPACE)
+				chars_ws == L"SPACE";
+			else if (vkey == VK_TAB)
+				chars_ws == L"TAB";
+			else if (vkey == VK_ACCEPT)
+				chars_ws == L"ACCEPT";
+			else if (vkey == VK_ADD)
+				chars_ws == L"ADD";
+			else if (vkey == VK_APPS)
+				chars_ws == L"APPS";
 			else {
 				//UINT vkey = MapVirtualKeyEx(keyboard.GetData().VKey, MAPVK_VK_TO_CHAR, layout);
 				std::vector<BYTE> keys(256, 0);

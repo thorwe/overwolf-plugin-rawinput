@@ -25,7 +25,6 @@ HWND hwnd = NULL;
 typedef RawInput::Input<> InputSys; // Instantiation with default template parameter.
 std::shared_ptr<InputSys> input = NULL;
 
-// fileExists( filename, callback(status) )
 PluginMethodKeyCapture::PluginMethodKeyCapture(NPObject* object, NPP npp) :
 PluginMethod(object, npp) {
 }
@@ -162,8 +161,8 @@ void PluginMethodKeyCapture::Execute() {
 		}
 	}
 	if (input == NULL) {
-		
 		input = std::make_shared<InputSys>(hwnd);
+	
 
 		(*input)
 			/*.connect(RawInput::RawMouse::Event([&]( const RawInput::RawMouse & mouse )
@@ -250,19 +249,12 @@ void PluginMethodKeyCapture::Execute() {
 
 				<< "\"MakeBreak\":\"" << std::dec << (keyboard.GetData().Flags & RI_KEY_BREAK ? TEXT("[B]") /*Break*/ : TEXT("[M]") /*Make*/) << "\"" << delim
 				//<< L"\"MakeBreak\":\"" << std::dec << (keyboard.GetData().Flags & RI_KEY_BREAK ? L"up" /*Break*/ : L"down" /*Make*/) << "\"" << delim
-
 				// << "\"MakeCode\":\"" << std::hex << std::setw(4) << keyboard.GetData().MakeCode << "\"" << delim
-
 				// << "\"Flags\":" << std::dec << std::setw(4) << keyboard.GetData().Flags << delim
-
 				// << std::dec << std::setw(4) << keyboard.GetData().Reserved << delim
-
 				// << "\"VKey\":\"" << std::hex << std::setw(4) << keyboard.GetData().VKey << "\"" << delim
-
 				// << "\"Message\":\"" << std::hex << std::setw(4) << keyboard.GetData().Message << "\"" << delim
-
 				// << "\"ExtraInfo\":" << std::dec << std::setw(4) << keyboard.GetData().ExtraInformation << delim
-
 				//<< "\"Char\":\"" << CHAR(vkey) << "\""
 				<< "\"Char\":\"" << utils::Encoders::utf8_encode(chars_ws) << "\""
 				//<< L"\"Char\":\"" << chars << L"\""
@@ -303,13 +295,9 @@ void PluginMethodKeyCapture::Execute() {
 
 	}
 
-	//bool done = false;
 	done_ = false;
 	MSG msg;
 	do {
-		//output_ = "EarlyDing";
-		//done_ = true;
-
 		while (HasCallback() && (!::PeekMessage(&msg, hwnd, 0u, 0u, PM_NOREMOVE))) {
 			::WaitMessage();
 		}

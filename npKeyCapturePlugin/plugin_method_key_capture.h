@@ -25,6 +25,7 @@ public:
 
 protected:
 	NPObject* callback_;
+
 	std::string input_;
 
 	// callback
@@ -35,6 +36,8 @@ protected:
 private:
 	SHORT last_keyCode;
 	bool done_;
+
+
 };
 
 

@@ -26,8 +26,6 @@ public:
 protected:
 	NPObject* callback_;
 
-	std::string input_;
-
 	// callback
 	std::string output_;
 

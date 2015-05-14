@@ -24,6 +24,7 @@ public:
   virtual void Execute() = 0;
   virtual void TriggerCallback() = 0;
   virtual std::string GetName() = 0;
+  //virtual int32_t CallbacksCount() = 0;
 
 protected:
   NPObject* object_;

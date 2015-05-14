@@ -46,9 +46,6 @@
     <ClCompile Include="utils\easyx\utility.cpp">
       <Filter>Source Files\utils\easyx</Filter>
     </ClCompile>
-    <ClCompile Include="plugin_method_xinput_capture.cpp">
-      <Filter>Source Files\plugin_methods</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\Thread.h">
@@ -87,9 +84,6 @@
     </ClInclude>
     <ClInclude Include="utils\easyx\utility.hpp">
       <Filter>Header Files\utils\easyx</Filter>
-    </ClInclude>
-    <ClInclude Include="plugin_method_xinput_capture.h">
-      <Filter>Header Files\plugin_methods</Filter>
     </ClInclude>
     <ClInclude Include="utils\VersionHelpers.h">
       <Filter>Header Files\utils</Filter>

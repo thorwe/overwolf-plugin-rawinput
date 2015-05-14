@@ -7,7 +7,7 @@
 
 #include "plugin_method.h"
 #include "plugin_method_key_capture.h"
-#include "plugin_method_xinput_capture.h"
+//#include "plugin_method_xinput_capture.h"
 
 #define REGISTER_METHOD(name, class) { \
 	NPIdentifier ident = NPN_GetStringIdentifier(name); \
@@ -29,9 +29,9 @@ nsScriptableObjectKeyCapture::~nsScriptableObjectKeyCapture(void) {
   if (thread_key.get()) {
     thread_key->Stop();
   }
-  if (thread_xinput.get()) {
+  /*if (thread_xinput.get()) {
 	  thread_xinput->Stop();
-  }
+  }*/
 }
 
 bool nsScriptableObjectKeyCapture::Init() {
@@ -39,7 +39,7 @@ bool nsScriptableObjectKeyCapture::Init() {
   REGISTER_METHOD("startKeyCapture", PluginMethodKeyCapture);
   REGISTER_GENERIC_METHOD("deleteKeyCaptureInstance", nsScriptableObjectKeyCapture::DeleteInstance);
 
-  REGISTER_METHOD("startXInputMonitor", PluginMethodXInputCapture);
+  //REGISTER_METHOD("startXInputMonitor", PluginMethodXInputCapture);
 
 #pragma endregion public methods
 
@@ -47,10 +47,10 @@ bool nsScriptableObjectKeyCapture::Init() {
 #pragma endregion read-only properties
 
   thread_key.reset(new utils::Thread());
-  thread_xinput.reset(new utils::Thread());
+  //thread_xinput.reset(new utils::Thread());
   bool start_key = thread_key->Start();
-  bool start_xinput = thread_xinput->Start();
-  return (start_key && start_xinput);
+  //bool start_xinput = thread_xinput->Start();
+  return (start_key);// && start_xinput);
 }
 
 bool nsScriptableObjectKeyCapture::HasMethod(NPIdentifier name) {
@@ -86,19 +86,32 @@ bool nsScriptableObjectKeyCapture::Invoke(
 	  return (this->*generic_iter->second)(name, args, argCount, result);
   }
   
-  PluginMethod* plugin_method = 
-    iter->second->Clone(this, npp_, args, argCount, result);
+  PluginMethod* plugin_method = iter->second->Clone(this, npp_, args, argCount, result);
 
   if (nullptr == plugin_method) {
     return false;
   }
-
+  
   utils::Thread* thread = 0;
   if (plugin_method->GetName().compare("RawInputMonitor") == 0) {
+	  
 	  thread = thread_key.get();
-  }
-  else if (plugin_method->GetName().compare("XInputMonitor") == 0) {
-	  thread = thread_xinput.get();
+	  //thread->Stop();
+	  //thread->Start();
+	  return thread->PostTask(std::bind(&nsScriptableObjectKeyCapture::ExecuteMethod, this, plugin_method));
+	  
+	  /*int32_t callbacksCount = plugin_method->CallbacksCount();
+	  
+	  if (callbacksCount > 1)
+		  return true;
+	  else if (callbacksCount == 1) {
+		  thread = thread_key.get();
+		  return thread->PostTask( std::bind( &nsScriptableObjectKeyCapture::ExecuteMethod, this, plugin_method));
+	  }
+	  else {
+		  NPN_SetException(this, "no callbacks");
+		  return false;
+	  }*/
   }
   else
   {
@@ -106,11 +119,6 @@ bool nsScriptableObjectKeyCapture::Invoke(
 	  return false;
   }
   
-  return thread->PostTask(
-    std::bind(
-    &nsScriptableObjectKeyCapture::ExecuteMethod, 
-    this,
-    plugin_method));
 }
 
 /************************************************************************/
@@ -157,13 +165,6 @@ bool nsScriptableObjectKeyCapture::SetProperty(
 /*
 /************************************************************************/
 void nsScriptableObjectKeyCapture::ExecuteMethod(PluginMethod* method) {
-  if (shutting_down_) {
-    return;
-  }
-
-  if (nullptr == method) {
-    return;
-  }
 
   while ((!shutting_down_) && nullptr != method) {
 	  method->Execute();

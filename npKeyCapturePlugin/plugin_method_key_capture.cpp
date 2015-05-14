@@ -16,8 +16,6 @@
 #include "utils\Encoders.h"
 
 int32_t id = 0;	// there is quite likely a better way to do this...
-std::map<int32_t, PluginMethodKeyCapture*> instanceMap;
-
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 HWND SetupWindow(LPCSTR);
@@ -25,19 +23,28 @@ HWND hwnd = NULL;
 typedef RawInput::Input<> InputSys; // Instantiation with default template parameter.
 std::shared_ptr<InputSys> input = NULL;
 
+PluginMethodKeyCapture* PluginMethodKeyCapture::instance_ = 0;
+
 PluginMethodKeyCapture::PluginMethodKeyCapture(NPObject* object, NPP npp) :
 PluginMethod(object, npp) {
 }
 
+PluginMethodKeyCapture::~PluginMethodKeyCapture() {
+	input.reset(); // Its better to destroy the RawInput object before unregistering the class.
+	hwnd = NULL;
+	input = NULL;
+}
+
 bool PluginMethodKeyCapture::DeleteInstance(int32_t id_in)	// static
 {
-	if (instanceMap.find(id_in) == instanceMap.end())
+	if (instance_ == 0)
 		return false;
 
-	PluginMethodKeyCapture* instance = instanceMap[id_in];
-	instance->callback_ = nullptr;
+	std::lock_guard<std::mutex> guard(instance_->mutex_callbacks_);
+	if (instance_->callbacks_.find(id_in) == instance_->callbacks_.end())
+		return false;
 
-	input.reset(); // Its better to destroy the RawInput object before unregistering the class.
+	//input.reset(); // Its better to destroy the RawInput object before unregistering the class.
 	
 	/*BOOL ret;
 	if (hwnd != NULL)
@@ -53,11 +60,13 @@ bool PluginMethodKeyCapture::DeleteInstance(int32_t id_in)	// static
 	if (ret == 0)
 		NPN_SetException(instance->__super::object_, "Window class unregistration failed"); */
 
-	hwnd = NULL;
-	input = NULL;
+	//hwnd = NULL;
+	//input = NULL;
 
 	// delete instance;
-	instanceMap.erase(id_in);
+	NPN_ReleaseObject(instance_->callbacks_[id_in]);
+	instance_->callbacks_.erase(id_in);
+	
 	return true;
 }
 
@@ -69,39 +78,49 @@ PluginMethod* PluginMethodKeyCapture::Clone(
 	uint32_t argCount,
 	NPVariant *result) {
 
-	PluginMethodKeyCapture* clone =
-		new PluginMethodKeyCapture(object, npp);
+	PluginMethodKeyCapture* clone = 0;
+	if (instance_ != 0)
+		clone = instance_;
+	else {
+		std::lock_guard<std::mutex> guard(mutex_instance_);
+		if (instance_ == 0)
+			instance_ = new PluginMethodKeyCapture(object, npp);
+
+		clone = instance_;
+	}
+
+	if (clone == 0) {
+		NPN_SetException(__super::object_, "plugin author too stupid to implement thread-safe singleton");
+		return nullptr;
+	}
 
 	try {
 		if (argCount != 2 ||
 			!NPVARIANT_IS_OBJECT(args[0]) ||
 			!NPVARIANT_IS_OBJECT(args[1])) {
-			NPN_SetException(
-				__super::object_,
-				"invalid params passed to function");
-			delete clone;
+			NPN_SetException(__super::object_, "invalid params passed to function");
+			//delete clone;
 			return nullptr;
 		}
 
-		clone->callback_ = NPVARIANT_TO_OBJECT(args[1]);
-
+		NPObject* callback = NPVARIANT_TO_OBJECT(args[1]);
 		// add ref count to callback object so it won't delete
-		NPN_RetainObject(clone->callback_);
-
+		NPN_RetainObject(callback);
 
 		// id + callback
-		clone->id_ = id;
+		int32_t newId = id;
 		++id;
 
-		instanceMap.insert(std::make_pair(clone->id_, clone));
+		//clone->callback_ = callback;
+		std::lock_guard<std::mutex> guard(mutex_callbacks_);
+		//callbacks_.insert(std::make_pair(newId, callback));
+		clone->callbacks_[newId] = callback;
+		
 		NPVariant arg;
 		NPVariant ret_val;
 		NPObject* id_callback = NPVARIANT_TO_OBJECT(args[0]);
 
-		INT32_TO_NPVARIANT(
-			clone->id_,
-			arg
-			);
+		INT32_TO_NPVARIANT(newId, arg);
 
 		// fire callback
 		NPN_InvokeDefault(
@@ -120,19 +139,25 @@ PluginMethod* PluginMethodKeyCapture::Clone(
 
 	}
 
-	delete clone;
+	//delete clone;
 	return nullptr;
 }
 
 // virtual
 bool PluginMethodKeyCapture::HasCallback() {
-	return (nullptr != callback_);
+	std::lock_guard<std::mutex> guard(mutex_callbacks_);
+	return (!callbacks_.empty());
+}
+
+int32_t PluginMethodKeyCapture::CallbacksCount() {
+	std::lock_guard<std::mutex> guard(mutex_callbacks_);
+	return callbacks_.size();
 }
 
 // virtual
 void PluginMethodKeyCapture::Execute() {
 	if (hwnd == NULL) {
-		if ((hwnd = SetupWindow("OW_MsgWnd_Thorwe_" + id_)) == NULL) {
+		if ((hwnd = SetupWindow("OW_MsgWnd_Thorwe")) == NULL) {
 			NPN_SetException(__super::object_, "could not create window");
 			return;
 		}
@@ -140,7 +165,6 @@ void PluginMethodKeyCapture::Execute() {
 	if (input == NULL) {
 		input = std::make_shared<InputSys>(hwnd);
 	
-
 		(*input)
 			/*.connect(RawInput::RawMouse::Event([&]( const RawInput::RawMouse & mouse )
 			{
@@ -148,27 +172,17 @@ void PluginMethodKeyCapture::Execute() {
 
 			std::wcout
 			<< TEXT("[") << std::hex << mouse.GetHandle() << TEXT("]") << std::dec
-
 			<< std::dec << std::setw(4) << mouse.GetData().usFlags << delim
-
 			<< std::hex << std::setw(8) << mouse.GetData().ulButtons << delim
-
 			<< std::dec << std::setw(4) << mouse.GetData().usButtonFlags << delim
-
 			<< std::dec << std::setw(4) << static_cast<short>(mouse.GetData().usButtonData) << delim
-
 			<< std::dec << std::setw(4) << mouse.GetData().ulRawButtons << delim
-
 			<< std::dec << std::setw(4) << mouse.GetData().lLastX << delim
 			<< std::dec << std::setw(4) << mouse.GetData().lLastY << delim
-
 			<< std::dec << std::setw(4) << mouse.GetData().ulExtraInformation
-
 			<< (mouse.Button(RawInput::RawMouse::BUTTON_1_DOWN|RawInput::RawMouse::BUTTON_2_DOWN) ? "!" : "")
-
 			<< (mouse.GetWheelDelta() == 0 ? ' ' :
 			mouse.GetWheelDelta() <  0 ? '<' : '>')
-
 			<< std::endl;
 			}))*/
 			.connect(RawInput::RawKeyboard::Event([&](const RawInput::RawKeyboard & keyboard)
@@ -222,7 +236,6 @@ void PluginMethodKeyCapture::Execute() {
 			else if (vkey == VK_APPS)
 				chars_ws == L"APPS";
 			else {
-				//UINT vkey = MapVirtualKeyEx(keyboard.GetData().VKey, MAPVK_VK_TO_CHAR, layout);
 				std::vector<BYTE> keys(256, 0);
 				int sc = MapVirtualKeyEx(vkey, MAPVK_VK_TO_VSC, layout);
 				const int BUFFER_LENGTH = 2; //Length of the buffer
@@ -235,9 +248,7 @@ void PluginMethodKeyCapture::Execute() {
 			std::stringstream s_out;
 			s_out
 				<< TEXT("{")
-				
 				// << "\"KeyboardHandle\":\"" << std::hex << keyboard.GetHandle() << "\"" << delim
-
 				<< "\"MakeBreak\":\"" << std::dec << (keyboard.GetData().Flags & RI_KEY_BREAK ? TEXT("[B]") /*Break*/ : TEXT("[M]") /*Make*/) << "\"" << delim
 				//<< L"\"MakeBreak\":\"" << std::dec << (keyboard.GetData().Flags & RI_KEY_BREAK ? L"up" /*Break*/ : L"down" /*Make*/) << "\"" << delim
 				// << "\"MakeCode\":\"" << std::hex << std::setw(4) << keyboard.GetData().MakeCode << "\"" << delim
@@ -248,10 +259,7 @@ void PluginMethodKeyCapture::Execute() {
 				// << "\"ExtraInfo\":" << std::dec << std::setw(4) << keyboard.GetData().ExtraInformation << delim
 				//<< "\"Char\":\"" << CHAR(vkey) << "\""
 				<< "\"Char\":\"" << utils::Encoders::utf8_encode(chars_ws) << "\""
-				//<< L"\"Char\":\"" << chars << L"\""
-
 				<< TEXT("}");
-				//<< L"}";
 				
 			/*auto vk = keyboard.GetData().VKey;
 			if (vk < 'A' || vk > 'Z')
@@ -264,23 +272,17 @@ void PluginMethodKeyCapture::Execute() {
 				output_ = out;
 				done_ = true;
 			}
-			// if (keyboard.KeyDown(VK_SPACE) || keyboard.KeyUp(VK_END)) ::PostMessage(hwnd, WM_CLOSE, 0, 0);
 		}));
-		/*
-		.connect(RawInput::RawHID::Event([&](const RawInput::RawHID & hid)
-		{
+		/*.connect(RawInput::RawHID::Event([&](const RawInput::RawHID & hid) {
 		const char delim = ',';
 		std::stringstream s_out;
-
 		s_out
 		<< TEXT("[") << std::hex << hid.GetHandle() << TEXT("] ")
 		<< std::dec
 		<< hid.GetData().dwSizeHid << delim
 		<< hid.GetData().dwCount << delim
 		<< hid.GetData().bRawData // bRawData is actually an array with sizeof(dwSizeHid*dwCount)
-
 		<< std::endl;
-
 		output_ = s_out.str();
 		}));*/
 
@@ -307,18 +309,11 @@ void PluginMethodKeyCapture::Execute() {
 
 // virtual
 void PluginMethodKeyCapture::TriggerCallback() {
-	if (!HasCallback())
-		return;
 
 	NPVariant arg;
-	NPVariant ret_val;
+	STRINGN_TO_NPVARIANT( output_.c_str(), output_.size(), arg );
 
-	STRINGN_TO_NPVARIANT(
-		output_.c_str(),
-		output_.size(),
-		arg);
-
-	// fire callback
+	/*NPVariant ret_val;
 	NPN_InvokeDefault(
 		__super::npp_,
 		callback_,
@@ -326,7 +321,25 @@ void PluginMethodKeyCapture::TriggerCallback() {
 		1,
 		&ret_val);
 
-	NPN_ReleaseVariantValue(&ret_val);
+	NPN_ReleaseVariantValue(&ret_val);*/
+	std::lock_guard<std::mutex> guard(mutex_callbacks_);
+	if (callbacks_.empty())
+		return;
+
+	typedef std::map<int32_t, NPObject*>::iterator it_type;
+	for (it_type iterator = callbacks_.begin(); iterator != callbacks_.end(); iterator++) {
+
+		NPVariant ret_val;
+		NPN_InvokeDefault(
+			__super::npp_,
+			iterator->second,
+			&arg,
+			1,
+			&ret_val);
+
+		NPN_ReleaseVariantValue(&ret_val);
+	}
+	
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

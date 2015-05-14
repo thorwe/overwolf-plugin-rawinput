@@ -146,7 +146,6 @@
     <ClCompile Include="plugin_common\np_entry.cpp" />
     <ClCompile Include="plugin_method.cpp" />
     <ClCompile Include="plugin_method_key_capture.cpp" />
-    <ClCompile Include="plugin_method_xinput_capture.cpp" />
     <ClCompile Include="utils\CriticalSectionLock.cpp" />
     <ClCompile Include="utils\easyx\easyx.cpp" />
     <ClCompile Include="utils\easyx\event.cpp" />
@@ -167,7 +166,6 @@
     <ClInclude Include="plugin_common\pluginbase.h" />
     <ClInclude Include="plugin_method.h" />
     <ClInclude Include="plugin_method_key_capture.h" />
-    <ClInclude Include="plugin_method_xinput_capture.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="utils\CriticalSectionLock.h" />
     <ClInclude Include="utils\easyx\easyx.hpp" />

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "npKeyCapturePlugin", "npKeyCapturePlugin.vcxproj", "{8754692C-87D8-5C0C-71E4-924F516D54EB}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "npRawInputPlugin", "npRawInputPlugin.vcxproj", "{8754692C-87D8-5C0C-71E4-924F516D54EB}"
 	ProjectSection(ProjectDependencies) = postProject
 		{83655DD6-74B4-4185-95BF-6989DA3C635E} = {83655DD6-74B4-4185-95BF-6989DA3C635E}
 	EndProjectSection

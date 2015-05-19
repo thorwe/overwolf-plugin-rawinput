@@ -2,13 +2,13 @@
 	"manifest_version":"1",
 	"type":"WebApp",
 	"meta":{
-		"name":"Key Capture Plugin Sample",
+		"name":"RawInput Plugin Sample",
 		"version":"1.0.0.0",
-		"minimum-overwolf-version": "0.81.34.0",
+		"minimum-overwolf-version": "0.85.190.0",
 		"author":"Thorsten Weinz (thorwe)",
 		"icon":"icon.png",
 		"icon_gray":"icon_gray.png",
-		"description":"Sample app for using the key capture plugin"
+		"description":"Sample app for using the RawInput plugin"
 	},
 	"data": {
 		"start_window":"index",
@@ -28,7 +28,6 @@
 				}
 			}
 		},
-		"plugins": ["npKeyCapturePlugin.dll"]
-	},
-	"permissions": ["GameInfo"]
+		"plugins": ["npRawInputPlugin.dll"]
+	}
 }

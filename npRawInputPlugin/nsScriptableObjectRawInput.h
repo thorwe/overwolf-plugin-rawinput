@@ -1,9 +1,9 @@
 /*
-  KeyCapture Plugin
+  RawInput Plugin
   Copyright (c) 2015 Thorsten Weinz
 */
-#ifndef NNSSCRIPTABLEOBJECTKEYCAPTURE_H_
-#define NNSSCRIPTABLEOBJECTKEYCAPTURE_H_
+#ifndef NNSSCRIPTABLEOBJECTRAWINPUT_H_
+#define NNSSCRIPTABLEOBJECTRAWINPUT_H_
 
 #include "nsScriptableObjectBase.h"
 #include <map>
@@ -14,10 +14,10 @@ class Thread; // forward declaration
 
 class PluginMethod;
 
-class nsScriptableObjectKeyCapture : public nsScriptableObjectBase {
+class nsScriptableObjectRawInput : public nsScriptableObjectBase {
 public:
-	nsScriptableObjectKeyCapture(NPP npp);
-	virtual ~nsScriptableObjectKeyCapture(void);
+	nsScriptableObjectRawInput(NPP npp);
+	virtual ~nsScriptableObjectRawInput(void);
 
 public:
   bool Init();
@@ -57,7 +57,7 @@ private:
 
   // generic method style
   // defines a generic method
-  typedef bool (nsScriptableObjectKeyCapture::*GenericMethodHandle)(
+  typedef bool (nsScriptableObjectRawInput::*GenericMethodHandle)(
 	  NPIdentifier,
 	  const NPVariant*,
 	  uint32_t,
@@ -78,8 +78,8 @@ private:
 
 // declare our NPObject-derived scriptable object class
 DECLARE_NPOBJECT_CLASS_WITH_BASE(
-  nsScriptableObjectKeyCapture, 
-  AllocateNpObject<nsScriptableObjectKeyCapture>);
+  nsScriptableObjectRawInput, 
+  AllocateNpObject<nsScriptableObjectRawInput>);
 
 
-#endif // NNSSCRIPTABLEOBJECTKEYCAPTURE_H_
+#endif // NNSSCRIPTABLEOBJECTRAWINPUT_H_

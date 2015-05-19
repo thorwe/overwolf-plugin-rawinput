@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -13,7 +13,7 @@
   <PropertyGroup Label="Globals">
     <SccProjectName />
     <SccLocalPath />
-    <ProjectName>npKeyCapturePlugin</ProjectName>
+    <ProjectName>npRawInputPlugin</ProjectName>
     <ProjectGuid>{8754692C-87D8-5C0C-71E4-924F516D54EB}</ProjectGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -21,12 +21,13 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -60,7 +61,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <WarningLevel>Level3</WarningLevel>
       <AdditionalIncludeDirectories>..\..\..\xulrunner-sdk\include;RawInput;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_WIN32_WINNT=0x0600;NDEBUG;MOZILLA_STRICT_API;XP_WIN;WIN32;_WINDOWS;_USRDLL;npKeyCapturePlugin_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WIN32_WINNT=0x0600;NDEBUG;MOZILLA_STRICT_API;XP_WIN;WIN32;_WINDOWS;_USRDLL;npRawInputPlugin_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
       <ObjectFileName>$(IntDir)</ObjectFileName>
@@ -102,7 +103,7 @@
       <MinimalRebuild>true</MinimalRebuild>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <AdditionalIncludeDirectories>..\..\..\xulrunner-sdk\include;..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_DEBUG;_WIN32_WINNT=0x0600;MOZILLA_STRICT_API;XP_WIN;WIN32;_WINDOWS;_USRDLL;npKeyCapturePlugin_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_WIN32_WINNT=0x0600;MOZILLA_STRICT_API;XP_WIN;WIN32;_WINDOWS;_USRDLL;npRawInputPlugin_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
       <ObjectFileName>$(IntDir)</ObjectFileName>
@@ -139,38 +140,32 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="nsScriptableObjectBase.cpp" />
-    <ClCompile Include="nsScriptableObjectKeyCapture.cpp" />
-    <ClCompile Include="nsPluginInstanceKeyCapture.cpp" />
+    <ClCompile Include="nsScriptableObjectRawInput.cpp" />
+    <ClCompile Include="nsPluginInstanceRawInput.cpp" />
     <ClCompile Include="plugin_common\npn_gate.cpp" />
     <ClCompile Include="plugin_common\npp_gate.cpp" />
     <ClCompile Include="plugin_common\np_entry.cpp" />
     <ClCompile Include="plugin_method.cpp" />
     <ClCompile Include="plugin_method_key_capture.cpp" />
     <ClCompile Include="utils\CriticalSectionLock.cpp" />
-    <ClCompile Include="utils\easyx\easyx.cpp" />
-    <ClCompile Include="utils\easyx\event.cpp" />
-    <ClCompile Include="utils\easyx\utility.cpp" />
     <ClCompile Include="utils\Encoders.cpp" />
     <ClCompile Include="utils\Thread.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="npKeyCapturePlugin.def" />
+    <CustomBuild Include="npRawInputPlugin.def" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="npKeyCapturePlugin.rc" />
+    <ResourceCompile Include="npRawInputPlugin.rc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="nsScriptableObjectBase.h" />
-    <ClInclude Include="nsScriptableObjectKeyCapture.h" />
-    <ClInclude Include="nsPluginInstanceKeyCapture.h" />
+    <ClInclude Include="nsScriptableObjectRawInput.h" />
+    <ClInclude Include="nsPluginInstanceRawInput.h" />
     <ClInclude Include="plugin_common\pluginbase.h" />
     <ClInclude Include="plugin_method.h" />
     <ClInclude Include="plugin_method_key_capture.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="utils\CriticalSectionLock.h" />
-    <ClInclude Include="utils\easyx\easyx.hpp" />
-    <ClInclude Include="utils\easyx\event.hpp" />
-    <ClInclude Include="utils\easyx\utility.hpp" />
     <ClInclude Include="utils\Encoders.h" />
     <ClInclude Include="utils\Thread.h" />
     <ClInclude Include="utils\VersionHelpers.h" />

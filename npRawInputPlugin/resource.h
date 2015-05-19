@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Von Microsoft Visual C++ generierte Includedatei.
-// Verwendet durch npKeyCapturePlugin.rc
+// Verwendet durch npRawInputPlugin.rc
 //
 #define IDD_MAIN                        101
 #define IDC_BUTTON_GO                   1002

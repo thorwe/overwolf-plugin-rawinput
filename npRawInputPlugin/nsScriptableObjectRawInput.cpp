@@ -2,7 +2,7 @@
   Simple IO Plugin
   Copyright (c) 2014 Overwolf Ltd.
 */
-#include "nsScriptableObjectKeyCapture.h"
+#include "nsScriptableObjectRawInput.h"
 #include "utils/Thread.h"
 
 #include "plugin_method.h"
@@ -18,12 +18,12 @@
 	generic_methods_[NPN_GetStringIdentifier(name)] = &method; \
 }
 
-nsScriptableObjectKeyCapture::nsScriptableObjectKeyCapture(NPP npp) :
+nsScriptableObjectRawInput::nsScriptableObjectRawInput(NPP npp) :
   nsScriptableObjectBase(npp),
   shutting_down_(false) {
 }
 
-nsScriptableObjectKeyCapture::~nsScriptableObjectKeyCapture(void) {
+nsScriptableObjectRawInput::~nsScriptableObjectRawInput(void) {
   shutting_down_ = true;
   
   if (thread_key.get()) {
@@ -34,10 +34,10 @@ nsScriptableObjectKeyCapture::~nsScriptableObjectKeyCapture(void) {
   }*/
 }
 
-bool nsScriptableObjectKeyCapture::Init() {
+bool nsScriptableObjectRawInput::Init() {
 #pragma region public methods
   REGISTER_METHOD("startKeyCapture", PluginMethodKeyCapture);
-  REGISTER_GENERIC_METHOD("deleteKeyCaptureInstance", nsScriptableObjectKeyCapture::DeleteInstance);
+  REGISTER_GENERIC_METHOD("deleteKeyCaptureInstance", nsScriptableObjectRawInput::DeleteInstance);
 
   //REGISTER_METHOD("startXInputMonitor", PluginMethodXInputCapture);
 
@@ -53,7 +53,7 @@ bool nsScriptableObjectKeyCapture::Init() {
   return (start_key);// && start_xinput);
 }
 
-bool nsScriptableObjectKeyCapture::HasMethod(NPIdentifier name) {
+bool nsScriptableObjectRawInput::HasMethod(NPIdentifier name) {
 #ifdef _DEBUG
   NPUTF8* name_utf8 = NPN_UTF8FromIdentifier(name);
   NPN_MemFree((void*)name_utf8);
@@ -63,7 +63,7 @@ bool nsScriptableObjectKeyCapture::HasMethod(NPIdentifier name) {
   return ((generic_methods_.find(name) != generic_methods_.end()) || (methods_.find(name) != methods_.end()));
 }
 
-bool nsScriptableObjectKeyCapture::Invoke(
+bool nsScriptableObjectRawInput::Invoke(
   NPIdentifier name, 
   const NPVariant *args, 
   uint32_t argCount, 
@@ -98,7 +98,7 @@ bool nsScriptableObjectKeyCapture::Invoke(
 	  thread = thread_key.get();
 	  //thread->Stop();
 	  //thread->Start();
-	  return thread->PostTask(std::bind(&nsScriptableObjectKeyCapture::ExecuteMethod, this, plugin_method));
+	  return thread->PostTask(std::bind(&nsScriptableObjectRawInput::ExecuteMethod, this, plugin_method));
 	  
 	  /*int32_t callbacksCount = plugin_method->CallbacksCount();
 	  
@@ -106,7 +106,7 @@ bool nsScriptableObjectKeyCapture::Invoke(
 		  return true;
 	  else if (callbacksCount == 1) {
 		  thread = thread_key.get();
-		  return thread->PostTask( std::bind( &nsScriptableObjectKeyCapture::ExecuteMethod, this, plugin_method));
+		  return thread->PostTask( std::bind( &nsScriptableObjectRawInput::ExecuteMethod, this, plugin_method));
 	  }
 	  else {
 		  NPN_SetException(this, "no callbacks");
@@ -124,7 +124,7 @@ bool nsScriptableObjectKeyCapture::Invoke(
 /************************************************************************/
 /* Public properties
 /************************************************************************/
-bool nsScriptableObjectKeyCapture::HasProperty(NPIdentifier name) {
+bool nsScriptableObjectRawInput::HasProperty(NPIdentifier name) {
 #ifdef _DEBUG
   NPUTF8* name_utf8 = NPN_UTF8FromIdentifier(name);
   NPN_MemFree((void*)name_utf8);
@@ -134,7 +134,7 @@ bool nsScriptableObjectKeyCapture::HasProperty(NPIdentifier name) {
   return (properties_.find(name) != properties_.end());
 }
 
-bool nsScriptableObjectKeyCapture::GetProperty(
+bool nsScriptableObjectRawInput::GetProperty(
   NPIdentifier name, NPVariant *result) {
 
   PropertiesMap::iterator iter = properties_.find(name);
@@ -154,7 +154,7 @@ bool nsScriptableObjectKeyCapture::GetProperty(
   return true;
 }
 
-bool nsScriptableObjectKeyCapture::SetProperty(
+bool nsScriptableObjectRawInput::SetProperty(
   NPIdentifier name, const NPVariant *value) {
   NPN_SetException(this, "this property is read-only!");
   return true;
@@ -164,7 +164,7 @@ bool nsScriptableObjectKeyCapture::SetProperty(
 /************************************************************************/
 /*
 /************************************************************************/
-void nsScriptableObjectKeyCapture::ExecuteMethod(PluginMethod* method) {
+void nsScriptableObjectRawInput::ExecuteMethod(PluginMethod* method) {
 
   while ((!shutting_down_) && nullptr != method) {
 	  method->Execute();
@@ -176,7 +176,7 @@ void nsScriptableObjectKeyCapture::ExecuteMethod(PluginMethod* method) {
 
 	  NPN_PluginThreadAsyncCall(
 		npp_, 
-		nsScriptableObjectKeyCapture::ExecuteCallback, 
+		nsScriptableObjectRawInput::ExecuteCallback, 
 		method);
   }
   if (nullptr != method)
@@ -184,7 +184,7 @@ void nsScriptableObjectKeyCapture::ExecuteMethod(PluginMethod* method) {
 }
 
 //static
-void nsScriptableObjectKeyCapture::ExecuteCallback(void* method) {
+void nsScriptableObjectRawInput::ExecuteCallback(void* method) {
   if (nullptr == method) {
     return;
   }
@@ -195,7 +195,7 @@ void nsScriptableObjectKeyCapture::ExecuteCallback(void* method) {
   // delete plugin_method;
 }
 
-bool nsScriptableObjectKeyCapture::DeleteInstance(
+bool nsScriptableObjectRawInput::DeleteInstance(
 	NPIdentifier name,
 	const NPVariant *args,
 	uint32_t argCount,

@@ -1,14 +1,14 @@
-#ifndef NSPLUGININSTANCEKEYCAPTURE_H
-#define NSPLUGININSTANCEKEYCAPTURE_H
+#ifndef NSPLUGININSTANCERAWINPUT_H
+#define NSPLUGININSTANCERAWINPUT_H
 
 #include <memory> // smart ptrs
 #include <windows.h> // required for pluginbase.h
 #include "plugin_common/pluginbase.h" // nsPluginInstanceBase
 
-class nsPluginInstanceKeyCapture : public nsPluginInstanceBase {
+class nsPluginInstanceRawInput : public nsPluginInstanceBase {
 public:
-	nsPluginInstanceKeyCapture(NPP instance);
-	virtual ~nsPluginInstanceKeyCapture();
+	nsPluginInstanceRawInput(NPP instance);
+	virtual ~nsPluginInstanceRawInput();
 
 public:
   NPBool init(NPWindow* window);
@@ -30,4 +30,4 @@ private:
   static int ref_count_;
 };
 
-#endif // NSPLUGININSTANCEKEYCAPTURE_H
+#endif // NSPLUGININSTANCERAWINPUT_H

@@ -8,7 +8,7 @@
 #include <vector>
 #include <sstream>
 
-#include <RawInput.h>
+#include "RawInput\RawInput.h"
 #include <iomanip>
 #include <memory>
 

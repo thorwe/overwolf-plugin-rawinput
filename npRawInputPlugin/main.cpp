@@ -54,11 +54,11 @@
 
     You can also use other ways, like a ::MessageBox or DebugBreak();
 */
-#include "nsPluginInstanceKeyCapture.h"
+#include "nsPluginInstanceRawInput.h"
 
 // this defines the mime-type when using <object> or <embed>
 // NOTE: this is actually really declared in the Version resource of the dll
-char kMimeType[] = "application/x-key-capture-plugin";
+char kMimeType[] = "application/x-raw-input-plugin";
 
 //////////////////////////////////////
 //
@@ -83,15 +83,15 @@ nsPluginInstanceBase* NS_NewPluginInstance(
     return nullptr;
   }
 
-  nsPluginInstanceKeyCapture* plugin = 
-    new nsPluginInstanceKeyCapture(aCreateDataStruct->instance);
+  nsPluginInstanceRawInput* plugin = 
+    new nsPluginInstanceRawInput(aCreateDataStruct->instance);
 
   return plugin;
 }
 
 void NS_DestroyPluginInstance(nsPluginInstanceBase * aPlugin) {
   if(aPlugin) {
-    delete (nsPluginInstanceKeyCapture*)aPlugin;
+    delete (nsPluginInstanceRawInput*)aPlugin;
   }
 }
 

@@ -42,14 +42,14 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "Thorsten Weinz (thorwe)"
-            VALUE "FileDescription", "npKeyCapturePlugin"
-            VALUE "FileOpenName", "npKeyCapturePlugin"
+            VALUE "FileDescription", "npRawInputPlugin"
+            VALUE "FileOpenName", "npRawInputPlugin"
             VALUE "FileVersion", "1.0.0.0"
-            VALUE "InternalName", "npKeyCapturePlugin"
+            VALUE "InternalName", "npRawInputPlugin"
             VALUE "LegalCopyright", "Copyright 2015 Thorsten Weinz"
-            VALUE "MIMEType", "application/x-key-capture-plugin"
-            VALUE "OriginalFilename", "npKeyCapturePlugin.dll"
-            VALUE "ProductName", "Key Capture Plugin"
+            VALUE "MIMEType", "application/x-raw-input-plugin"
+            VALUE "OriginalFilename", "npRawInputPlugin.dll"
+            VALUE "ProductName", "RawInput Plugin"
             VALUE "ProductVersion", "1.0.0.0"
         END
     END

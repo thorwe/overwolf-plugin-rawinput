@@ -25,8 +25,8 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,0,0
- PRODUCTVERSION 1,0,0,0
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -44,13 +44,13 @@ BEGIN
             VALUE "CompanyName", "Thorsten Weinz (thorwe)"
             VALUE "FileDescription", "npRawInputPlugin"
             VALUE "FileOpenName", "npRawInputPlugin"
-            VALUE "FileVersion", "1.0.0.0"
+            VALUE "FileVersion", "1.0.0.1"
             VALUE "InternalName", "npRawInputPlugin"
             VALUE "LegalCopyright", "Copyright 2015 Thorsten Weinz"
             VALUE "MIMEType", "application/x-raw-input-plugin"
             VALUE "OriginalFilename", "npRawInputPlugin.dll"
             VALUE "ProductName", "RawInput Plugin"
-            VALUE "ProductVersion", "1.0.0.0"
+            VALUE "ProductVersion", "1.0.0.1"
         END
     END
     BLOCK "VarFileInfo"

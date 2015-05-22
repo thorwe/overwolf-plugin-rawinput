@@ -23,6 +23,7 @@ public:
   bool Start();
   bool Stop();
   bool PostTask(Task task_func);
+  bool isQueueEmpty();
 
 private:
   bool CreateEvents();

@@ -2,7 +2,7 @@
 
 using namespace utils;
 
-const DWORD kStopThreadTimeoutMS = 10000;
+const DWORD kStopThreadTimeoutMS = 25;
 
 Thread::Thread() : 
   thread_(nullptr),
@@ -69,6 +69,11 @@ bool Thread::PostTask(Task task_func) {
   task_queue_.push(task_func);
 
   return (TRUE == SetEvent(events_[EVENT_NEW_TASK]));
+}
+
+bool Thread::isQueueEmpty() {
+	CriticalSectionLock lock(queue_critical_section_);
+	return task_queue_.empty();
 }
 
 bool Thread::CreateEvents() {

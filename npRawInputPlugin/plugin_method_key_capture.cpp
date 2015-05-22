@@ -30,9 +30,31 @@ PluginMethod(object, npp) {
 }
 
 PluginMethodKeyCapture::~PluginMethodKeyCapture() {
+	
 	input.reset(); // Its better to destroy the RawInput object before unregistering the class.
-	hwnd = NULL;
 	input = NULL;
+
+	typedef std::map<int32_t, NPObject*>::iterator it_type;
+	for (it_type iterator = callbacks_.begin(); iterator != callbacks_.end(); iterator++) {
+		NPN_ReleaseObject(iterator->second);
+	};
+	instance_->callbacks_.clear();
+
+	BOOL ret;
+	if (hwnd != NULL)
+	{
+		PostMessage(hwnd, WM_CLOSE, 0, 0);
+		/*ret = DestroyWindow(hwnd);
+		if (ret == 0)
+			NPN_SetException(instance_->__super::object_, "Window destruction failed!");*/
+
+		hwnd = NULL;
+	}
+	
+	ret = ::UnregisterClass("OW_MsgWnd_Thorwe", ::GetModuleHandle(nullptr));
+	if (ret == 0)
+		NPN_SetException(instance_->__super::object_, "Window class unregistration failed");
+
 }
 
 bool PluginMethodKeyCapture::DeleteInstance(int32_t id_in)	// static
@@ -43,25 +65,6 @@ bool PluginMethodKeyCapture::DeleteInstance(int32_t id_in)	// static
 	std::lock_guard<std::mutex> guard(instance_->mutex_callbacks_);
 	if (instance_->callbacks_.find(id_in) == instance_->callbacks_.end())
 		return false;
-
-	//input.reset(); // Its better to destroy the RawInput object before unregistering the class.
-	
-	/*BOOL ret;
-	if (hwnd != NULL)
-	{
-		ret = DestroyWindow(hwnd);
-		if (ret == 0)
-			NPN_SetException(instance->__super::object_, "Window destroying failed!");
-
-		hwnd = NULL;
-	}
-
-	ret = ::UnregisterClass("OW_MsgWnd_Thorwe", ::GetModuleHandle(nullptr));
-	if (ret == 0)
-		NPN_SetException(instance->__super::object_, "Window class unregistration failed"); */
-
-	//hwnd = NULL;
-	//input = NULL;
 
 	// delete instance;
 	NPN_ReleaseObject(instance_->callbacks_[id_in]);
@@ -162,6 +165,7 @@ void PluginMethodKeyCapture::Execute() {
 			return;
 		}
 	}
+
 	if (input == NULL) {
 		input = std::make_shared<InputSys>(hwnd);
 	
@@ -300,7 +304,7 @@ void PluginMethodKeyCapture::Execute() {
 				::TranslateMessage(&msg);
 				::DispatchMessage(&msg);
 
-				if (msg.message == WM_QUIT) done_ = true;
+				if (msg.message == WM_QUIT || msg.message == WM_CLOSE) done_ = true;
 			}
 		}
 	} while (!done_);
@@ -313,15 +317,6 @@ void PluginMethodKeyCapture::TriggerCallback() {
 	NPVariant arg;
 	STRINGN_TO_NPVARIANT( output_.c_str(), output_.size(), arg );
 
-	/*NPVariant ret_val;
-	NPN_InvokeDefault(
-		__super::npp_,
-		callback_,
-		&arg,
-		1,
-		&ret_val);
-
-	NPN_ReleaseVariantValue(&ret_val);*/
 	std::lock_guard<std::mutex> guard(mutex_callbacks_);
 	if (callbacks_.empty())
 		return;

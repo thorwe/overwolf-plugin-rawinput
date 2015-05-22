@@ -96,22 +96,10 @@ bool nsScriptableObjectRawInput::Invoke(
   if (plugin_method->GetName().compare("RawInputMonitor") == 0) {
 	  
 	  thread = thread_key.get();
-	  //thread->Stop();
-	  //thread->Start();
-	  return thread->PostTask(std::bind(&nsScriptableObjectRawInput::ExecuteMethod, this, plugin_method));
-	  
-	  /*int32_t callbacksCount = plugin_method->CallbacksCount();
-	  
-	  if (callbacksCount > 1)
+	  if (thread->isQueueEmpty())	// this thread only has one task
+		  return thread->PostTask(std::bind(&nsScriptableObjectRawInput::ExecuteMethod, this, plugin_method));
+	  else
 		  return true;
-	  else if (callbacksCount == 1) {
-		  thread = thread_key.get();
-		  return thread->PostTask( std::bind( &nsScriptableObjectRawInput::ExecuteMethod, this, plugin_method));
-	  }
-	  else {
-		  NPN_SetException(this, "no callbacks");
-		  return false;
-	  }*/
   }
   else
   {

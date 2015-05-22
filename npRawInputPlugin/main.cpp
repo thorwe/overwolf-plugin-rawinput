@@ -1,9 +1,4 @@
 /*
-  Simple IO Plugin
-  Copyright (c) 2014 Overwolf Ltd.
-*/
-
-/*
   Steps to create a plugin for Overwolf:
 
   1. Make sure ..\xulrunner-sdk folder exists

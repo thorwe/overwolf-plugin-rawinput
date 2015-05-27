@@ -4,7 +4,8 @@
 #include "plugin_method.h"
 #include <string>
 #include <map>
-#include <mutex>
+//#include <mutex>
+#include "utils\CriticalSectionLock.h"
 
 class PluginMethodKeyCapture : public PluginMethod {
 public:
@@ -30,7 +31,8 @@ public:
 protected:
 	//NPObject* callback_;
 	std::map<int32_t, NPObject*> callbacks_;
-	std::mutex mutex_callbacks_;
+	
+	utils::CriticalSection lockerCbks_;	////std::mutex mutex_callbacks_; msvc 2010 not available; CriticalSection is a better choice anyways (faster)
 
 	// callback
 	std::string output_;
@@ -42,7 +44,7 @@ private:
 	bool done_;
 
 	static PluginMethodKeyCapture* instance_;
-	std::mutex mutex_instance_;
+	utils::CriticalSection locker_instance_; //std::mutex mutex_instance_;
 };
 
 

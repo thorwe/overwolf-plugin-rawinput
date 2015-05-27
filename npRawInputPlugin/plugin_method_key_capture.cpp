@@ -62,7 +62,7 @@ bool PluginMethodKeyCapture::DeleteInstance(int32_t id_in)	// static
 	if (instance_ == 0)
 		return false;
 
-	std::lock_guard<std::mutex> guard(instance_->mutex_callbacks_);
+	utils::CriticalSectionLock locker(instance_->lockerCbks_);	//std::lock_guard<std::mutex> guard(instance_->mutex_callbacks_);
 	if (instance_->callbacks_.find(id_in) == instance_->callbacks_.end())
 		return false;
 
@@ -85,7 +85,7 @@ PluginMethod* PluginMethodKeyCapture::Clone(
 	if (instance_ != 0)
 		clone = instance_;
 	else {
-		std::lock_guard<std::mutex> guard(mutex_instance_);
+		utils::CriticalSectionLock locker(locker_instance_); //std::lock_guard<std::mutex> guard(mutex_instance_);
 		if (instance_ == 0)
 			instance_ = new PluginMethodKeyCapture(object, npp);
 
@@ -115,7 +115,7 @@ PluginMethod* PluginMethodKeyCapture::Clone(
 		++id;
 
 		//clone->callback_ = callback;
-		std::lock_guard<std::mutex> guard(mutex_callbacks_);
+		utils::CriticalSectionLock locker(lockerCbks_); //std::lock_guard<std::mutex> guard(mutex_callbacks_);
 		//callbacks_.insert(std::make_pair(newId, callback));
 		clone->callbacks_[newId] = callback;
 		
@@ -148,12 +148,12 @@ PluginMethod* PluginMethodKeyCapture::Clone(
 
 // virtual
 bool PluginMethodKeyCapture::HasCallback() {
-	std::lock_guard<std::mutex> guard(mutex_callbacks_);
+	utils::CriticalSectionLock locker(lockerCbks_);	//std::lock_guard<std::mutex> guard(mutex_callbacks_);
 	return (!callbacks_.empty());
 }
 
 int32_t PluginMethodKeyCapture::CallbacksCount() {
-	std::lock_guard<std::mutex> guard(mutex_callbacks_);
+	utils::CriticalSectionLock locker(lockerCbks_);	//std::lock_guard<std::mutex> guard(mutex_callbacks_);
 	return callbacks_.size();
 }
 
@@ -317,7 +317,7 @@ void PluginMethodKeyCapture::TriggerCallback() {
 	NPVariant arg;
 	STRINGN_TO_NPVARIANT( output_.c_str(), output_.size(), arg );
 
-	std::lock_guard<std::mutex> guard(mutex_callbacks_);
+	utils::CriticalSectionLock locker(lockerCbks_); //std::lock_guard<std::mutex> guard(mutex_callbacks_);
 	if (callbacks_.empty())
 		return;
 

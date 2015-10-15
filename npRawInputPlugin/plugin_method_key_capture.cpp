@@ -199,6 +199,8 @@ void PluginMethodKeyCapture::Execute() {
 				chars_ws = L"CTRL";
 			else if (vkey == VK_SHIFT)
 				chars_ws = L"SHIFT";
+			else if (vkey == VK_BACK)
+				chars_ws = L"BS";
 			else if (vkey == VK_TAB)
 				chars_ws = L"TAB";
 			else if (vkey == VK_MENU)
